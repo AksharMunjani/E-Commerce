@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Codeswear.com - wear the code</title>
+        <title>CodesWear || Home</title>
         <meta name='description' content='CodesWear.com - Wear the code' />
         <link rel="icon" href="/favicon.ico" />
       </Head>

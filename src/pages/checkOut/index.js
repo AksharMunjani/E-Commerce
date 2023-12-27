@@ -1,10 +1,17 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { HiMinusCircle, HiPlusCircle } from 'react-icons/hi'
 import { IoIosRemoveCircle } from 'react-icons/io'
 import { IoBagCheck, IoCloseCircle } from 'react-icons/io5'
 
 const CheckOut = ({ cart, addtoCart, removeFromCart, subTotal }) => {
+
+    useEffect(() => {
+        if (document) {
+            document.title = 'CodesWear || CheckOut';
+        }
+    }, [])
+    
     return (
         <div className='container px-5 sm:mx-auto'>
             <h1 className='font-bold text-center text-3xl my-8'>CheckOut</h1>

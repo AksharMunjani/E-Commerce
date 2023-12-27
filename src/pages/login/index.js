@@ -7,13 +7,16 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
 
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const router = useRouter()
 
     useEffect(() => {
         if (localStorage?.getItem('token')) {
             router?.push('/')
+        }
+        if (document) {
+            document.title = 'CodesWear || Login';
         }
     }, [])
 
@@ -31,8 +34,8 @@ const Login = () => {
         e?.preventDefault();
         const data = { email, password };
 
-        try {   
-            const response = await axios.post("http://localhost:3000/api/login", data);
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/login`, data)
 
             setEmail("");
             setPassword("");
@@ -50,7 +53,7 @@ const Login = () => {
                     theme: "light",
                 });
                 setTimeout(() => {
-                    router?.push("http://localhost:3000");
+                    router?.push(process.env.NEXT_PUBLIC_HOST);
                 }, 1800);
             } else {
                 toast.error(response.data.error, {

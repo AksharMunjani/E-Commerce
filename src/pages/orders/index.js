@@ -1,13 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Order from '../../../models/Order'
 import mongoose from 'mongoose'
 
 const Orders = () => {
+
+  useEffect(() => {
+    if (document) {
+      document.title = 'CodesWear || Orders';
+    }
+  }, [])
+
   return (
     <>
       <div className='container mx-auto'>
+        <h1 className='p-8 text-2xl text-center font-medium'>My Orders</h1>
         <div className="relative overflow-x-auto">
-          <h1 className='p-8 text-2xl text-center font-medium'>My Orders</h1>
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>

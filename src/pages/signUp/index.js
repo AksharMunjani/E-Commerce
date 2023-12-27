@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Link from 'next/link'
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react'
@@ -6,15 +7,18 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp = () => {
 
-    const [name, setName] = useState()
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     const router = useRouter()
 
     useEffect(() => {
         if (localStorage?.getItem('token')) {
             router?.push('/')
+        }
+        if (document) {
+            document.title = 'CodesWear || SignUp';
         }
     }, [])
 
@@ -31,33 +35,63 @@ const SignUp = () => {
     }
 
     const handleSubmit = async (e) => {
-        e?.preventDefault()
-        const data = { name, email, password }
-        let res = await fetch("http://localhost:3000/api/signup", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON?.stringify(data),
-        })
+        e?.preventDefault();
+        const data = { name, email, password };
 
-        let response = await res?.json()
-        console.log("🚀 ~ file: index.js:34 ~ handleSubmit ~ response:", response)
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON?.stringify(data)
+            });
 
-        setEmail("")
-        setName("")
-        setPassword("")
-        toast.success('Your account has been created!', {
-            position: "bottom-left",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-    }
+            setEmail("");
+            setName("");
+            setPassword("");
+            toast.success('Your account has been created!', {
+                position: "bottom-left",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        } catch (error) {
+            console.error("Error during signup:", error);
+        }
+    };
+
+    // const handleSubmit = async (e) => {
+    //     e?.preventDefault()
+    //     const data = { name, email, password }
+    //     let res = await fetch("http://localhost:3000/api/signup", {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON?.stringify(data),
+    //     })
+
+    //     let response = await res?.json()
+    //     console.log("🚀 ~ file: index.js:34 ~ handleSubmit ~ response:", response)
+
+    //     setEmail("")
+    //     setName("")
+    //     setPassword("")
+    //     toast.success('Your account has been created!', {
+    //         position: "bottom-left",
+    //         autoClose: 1000,
+    //         hideProgressBar: false,
+    //         closeOnClick: true,
+    //         pauseOnHover: true,
+    //         draggable: true,
+    //         progress: undefined,
+    //         theme: "light",
+    //     });
+    // }
 
     return (
         <div>

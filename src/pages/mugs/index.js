@@ -1,9 +1,15 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Product from '../../../models/Product'
 import mongoose from 'mongoose'
 
 const Mugs = ({ products }) => {
+
+    useEffect(() => {
+        if (document) {
+            document.title = 'CodesWear || Mugs';
+        }
+    }, [])
 
     return (
         <div>

@@ -10,6 +10,9 @@ const Forgot = () => {
         if (localStorage?.getItem('token')) {
             router?.push('/')
         }
+        if (document) {
+            document.title = 'CodesWear || Forgot';
+        }
     }, [])
 
     return (

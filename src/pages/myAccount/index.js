@@ -3,17 +3,20 @@ import React, { useEffect } from 'react'
 
 const MyAccount = () => {
 
-    const router = useRouter()
+  const router = useRouter()
 
-    useEffect(() => {
-        if (!localStorage?.getItem('token')) {
-            router?.push('/')
-        }
-    }, [])
-    
+  useEffect(() => {
+    if (!localStorage?.getItem('token')) {
+      router?.push('/')
+    }
+    if (document) {
+      document.title = 'CodesWear || MyAccount';
+    }
+  }, [])
+
   return (
     <div>
-      
+
     </div>
   )
 }
