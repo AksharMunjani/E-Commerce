@@ -2,8 +2,10 @@ import Footer from '@/components/footer'
 import Navbar from '@/components/navbar'
 import '@/styles/globals.css'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import LoadingBar from 'react-top-loading-bar'
+
+export const CartContext = createContext();
 
 export default function App({ Component, pageProps }) {
 
@@ -15,8 +17,8 @@ export default function App({ Component, pageProps }) {
 
   const router = useRouter()
 
+
   useEffect(() => {
-    console.log("Hey i am useEffact from _app.js")
     router?.events?.on('routeChangeStart', () => { setProgress(40) })
     router?.events?.on('routeChangeComplete', () => { setProgress(100) })
     try {
@@ -28,15 +30,15 @@ export default function App({ Component, pageProps }) {
       console.log(error)
       localStorage.clear()
     }
-    const token = localStorage?.getItem('token')
-    if (token) {
-      setUser({ value: token })
-      setKey(Math?.random())
+    const myuser = JSON?.parse(localStorage?.getItem('myuser'))
+    if (myuser) {
+      setUser({ token: myuser?.token, email: myuser?.email })
     }
+    setKey(Math?.random())
   }, [router?.query])
 
   const logout = () => {
-    localStorage?.removeItem('token')
+    localStorage?.removeItem('myuser')
     setUser({ value: null })
     setKey(Math?.random())
     router?.push('/')
@@ -65,7 +67,8 @@ export default function App({ Component, pageProps }) {
   }
 
   const buyNow = (itemCode, qty, price, name, size, variant) => {
-    let newCart = { itemCode: { qty: 1, price, name, size, variant } }
+    let newCart = {}
+    newCart[itemCode] = { qty: 1, price, name, size, variant }
 
     setCart(newCart)
     saveCart(newCart)
@@ -89,16 +92,20 @@ export default function App({ Component, pageProps }) {
     saveCart(newCart)
   }
 
+  const totalItems = Object.values(cart).reduce((total, item) => total + item.qty, 0);
+
   return <>
-    <LoadingBar
-      height={3}
-      waitingTime={400}
-      color='#ff2d55'
-      progress={progress}
-      onLoaderFinished={() => setProgress(0)}
-    />
-    <Navbar logout={logout} user={user} key={key} cart={cart} addtoCart={addtoCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} />
-    <Component buyNow={buyNow} cart={cart} addtoCart={addtoCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal}  {...pageProps} />
-    <Footer />
+    <CartContext.Provider value={{ totalItems }}>
+      <LoadingBar
+        height={3}
+        waitingTime={400}
+        color='#ff2d55'
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+      />
+      {key && <Navbar logout={logout} user={user} key={key} cart={cart} addtoCart={addtoCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} />}
+      <Component buyNow={buyNow} cart={cart} addtoCart={addtoCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal}  {...pageProps} />
+      <Footer />
+    </CartContext.Provider>
   </>
 }

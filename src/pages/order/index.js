@@ -1,6 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import Order from '../../../models/Order'
+import mongoose from 'mongoose'
+import { useRouter } from 'next/router';
 
-const Order = () => {
+const MyOrder = ({ order, clearCart }) => {
+
+  let products = order?.products;
+  const router = useRouter()
+  useEffect(() => {
+    if (router?.query?.clearCart == 1) {
+      clearCart()
+    }
+  }, [])
+
   return (
     <>
       <section className="text-gray-600 body-font overflow-hidden">
@@ -8,30 +20,29 @@ const Order = () => {
           <div className="lg:w-4/5 mx-auto flex flex-wrap">
             <div className="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
               <h2 className="text-sm title-font text-gray-500 tracking-widest">CODESWEAR.COM</h2>
-              <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">Order ID: #89777</h1>
-              <p className="leading-relaxed mb-4">Your order has been succcessfully placed</p>
-              <div className="flex justify-between">
-                <a className="text-pink-500 py-2 text-lg px-1">Item Description</a>
-                <a className="text-pink-500 py-2 text-lg px-1">Quantity</a>
-                <a className="text-pink-500 py-2 text-lg px-1">Item Total</a>
-              </div>
-              <div className="flex border-t border-gray-200 py-2">
-                <span className="text-gray-500">Wear the code (XL/Black)</span>
-                <span className="ml-auto text-gray-900">1</span>
-                <span className="ml-auto text-gray-900">₹ 500</span>
-              </div>
-              <div className="flex border-t border-gray-200 py-2">
-                <span className="text-gray-500">Wear the code (XL/Red)</span>
-                <span className="ml-auto text-gray-900">1</span>
-                <span className="ml-auto text-gray-900">₹ 500</span>
-              </div>
-              <div className="flex border-t border-b mb-6 border-gray-200 py-2">
-                <span className="text-gray-500">Wear the code (XL/White)</span>
-                <span className="ml-auto text-gray-900">4</span>
-                <span className="ml-auto text-gray-900">₹ 500</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="title-font font-medium text-2xl text-gray-900">Subtotal: ₹ 1158.00</span>
+              <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">Order ID: #{order?.orderId}</h1>
+              <p className="leading-relaxed">Your order has been succcessfully placed.</p>
+              <p className='mb-4'>Your Payment Status is: <span className='font-semibold text-slate-700'>{order?.status}</span></p>
+              <table className="overflow-x-scroll w-full text-sm">
+                <thead>
+                  <tr>
+                    <th scope="col" className="text-pink-500 py-2 text-lg px-1 text-center">Item Description</th>
+                    <th scope="col" className="text-pink-500 py-2 text-lg px-1 text-center">Quantity</th>
+                    <th scope="col" className="text-pink-500 py-2 text-lg px-1 text-center">Item Total</th>
+                  </tr>
+                </thead>
+                {Object?.keys(products).map((item) => {
+                  return <tbody key={item}>
+                    <tr className="border-t border-gray-200">
+                      <th className="text-gray-500 text-center py-2">{products[item].name} ({products[item].size}/{products[item].variant})</th>
+                      <td className="text-gray-500 text-center py-2">{products[item].qty}</td>
+                      <td className="text-gray-500 text-center py-2">₹ {products[item].price}</td>
+                    </tr>
+                  </tbody>
+                })}
+              </table>
+              <div className="flex flex-col mt-8">
+                <span className="title-font font-medium text-2xl text-gray-900">Subtotal: ₹{order?.amount}</span>
                 <button className="flex w-full justify-center mt-4 mx-auto text-white bg-pink-500 border-0 py-2 px-6 focus:outline-none hover:bg-pink-600 rounded">Track Order</button>
               </div>
             </div>
@@ -44,4 +55,14 @@ const Order = () => {
   )
 }
 
-export default Order
+export async function getServerSideProps(context) {
+  if (!mongoose?.connections[0]?.readyState) {
+    await mongoose?.connect(process?.env?.MONGO_URL)
+  }
+  let order = await Order?.findById(context?.query?.id)
+  return {
+    props: { order: JSON?.parse(JSON?.stringify(order)) }
+  }
+}
+
+export default MyOrder

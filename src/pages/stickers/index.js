@@ -7,7 +7,7 @@ const Stickers = ({ products }) => {
 
     useEffect(() => {
         if (document) {
-            document.title = 'CodesWear || Tshirt';
+            document.title = 'CodesWear || Stickers';
         }
     }, [])
 
